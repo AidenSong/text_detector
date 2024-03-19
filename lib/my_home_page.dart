@@ -2,9 +2,12 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:text_detector/camera_view.dart';
 
 
 
@@ -53,6 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: buildGalleryView(),
+      // body: CameraView(
+      //   customPaint: _customPaint,
+      //   onImage: _processImage,
+      // ),
     );
   }
 
@@ -97,7 +104,22 @@ class _MyHomePageState extends State<MyHomePage> {
       ElevatedButton(
         onPressed: () =>_getImage(ImageSource.gallery),
         child: Text("갤러리 이미지 가져오기"),
-      )
+      ),
+
+      Expanded(
+        child: SingleChildScrollView(
+          child: Text(
+            _text,
+          ),
+        ),
+      ),
+
+    ],
+  );
+
+  Widget buildCameraView() => Column(
+    children: [
+
     ],
   );
 
@@ -133,10 +155,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (inputImage.metadata?.size != null
     && inputImage.metadata?.rotation != null) {
-
+      print(RecognizedText);
+      // final painter =
+      // _customPaint = CustomPaint(painter: ,)
     } else {
       // 갤러리에서 가져온 값 처리
       _text = "Recognized Text : ${RecognizedText.text}\n\n";
+      setState(() {
+        for (var block in RecognizedText.blocks) {
+          _text += "Block : ${block.text}\n";
+          // for (var line in block.lines) {
+          //   _text = "Line : ${line.text}\n";
+          //   for (var element in line.elements) {
+          //     _text = "element : ${element.text}\n";
+          //   }
+          // }
+          _text += "\n\n";
+        }
+      });
       _customPaint = null;
     }
     _isBusy = false;
